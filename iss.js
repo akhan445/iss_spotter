@@ -26,5 +26,21 @@ const fetchMyIP = function(callback) {
   });
 };
 
+const fetchCoorsByIp = function(ip, callback) {
+  request(`https://freegeoip.app/json/${ip}`, (err, res, body) => {
+    if (err) {
+      callback(err, null);
+      return;
+    }
+    // if non-200 status, assume server error
+    if (res.statusCode !== 200) {
+      const msg = `Status Code ${res.statusCode} when fetching coordinates for IP. Response: ${body}`;
+      callback(msg, null);
+      return;
+    }
+    const { latitude, longitude } =  JSON.parse(body);
+    callback(null, { latitude, longitude });
+  });
+};
 
-module.exports = { fetchMyIP };
+module.exports = { fetchMyIP, fetchCoorsByIp };
